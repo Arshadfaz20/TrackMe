@@ -12,12 +12,13 @@ mongoose.connect('mongodb+srv://A_faz:1234@cluster0.cfzke.mongodb.net', { useNew
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+app.use(express.static('public'));
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-RequestedWith, Content-Type, Accept");
-    next();
-    });
+app.use((req, res, next) => {
+ res.header("Access-Control-Allow-Origin", "*");
+ res.header("Access-Control-Allow-Headers", "Origin, X-RequestedWith, Content-Type, Accept");
+ next();
+});
 
 app.use(express.static(`${__dirname}/public/generated-docs`));
 
@@ -136,7 +137,7 @@ app.post('/api/authenticate', (req, res) => {
     })
 })
 
-app.post('/api/re gistration', (req, res) => {
+app.post('/api/registration', (req, res) => {
     const { user, password, isAdmin } = req.body;
     User.findOne({ user: user }, (error, username) => {
         if (username == null) {
@@ -159,10 +160,6 @@ app.post('/api/re gistration', (req, res) => {
     })
 })
 
-
-app.post('/api/send-command', (req, res) => {
-    console.log(req.body);
-     });
 
 app.listen(port, () => {
  console.log(`listening on port ${port}`);

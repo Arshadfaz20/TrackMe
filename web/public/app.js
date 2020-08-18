@@ -1,7 +1,8 @@
 $('#navbar').load('navbar.html');
 $('#footer').load('footer.html');
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://api-tawny.vercel.app/api';
+const MQTT_URL = 'http://localhost:5001/send-command';
 
 const currentUser = localStorage.getItem('user');
 if (currentUser) {
@@ -74,14 +75,14 @@ $('#add-device').on('click', () => {
   const password = $('#password').val();
   $.post(`${API_URL}/authenticate`, { user, password })
   .then((response) =>{
-  if (response.success) {
-  localStorage.setItem('user', user);
-  localStorage.setItem('isAdmin', response.isAdmin);
-  localStorage.setItem('isAuthenticated', true);
-  location.href = '/';
+    if (response.success) {
+      localStorage.setItem('user', user);
+      localStorage.setItem('isAdmin', response.isAdmin);
+      localStorage.setItem('isAuthenticated', true);
+      location.href = '/';
   } else {
-  $('#message').append(`<p class="alert alert-danger">${response}
- </p>`);
+    $('#message').append(`<p class="alert alert-danger">${response}
+  </p>`);
   }
   });
  });
@@ -108,8 +109,23 @@ $('#add-device').on('click', () => {
   else{
     document.getElementById("message").innerHTML = "Passwords do not match";
   }
-
 });
+
+$('#send-command').on('click', function () {
+  console.log("clcied");
+  const command = $('#command').val();
+  const id = $('#id').val();
+  console.log(`id is: ${id}  command is: ${command}`);
+  $.post(`${MQTT_URL}`, { id, command }).then((response) => {
+      if (response.success) {
+          $('#message').append(`<p class="alert alert-success">${response.message}</p>`);
+      }
+      else {
+          $('#message').append(`<p class="alert alert-danger">${err}</p>`);
+      }
+  })
+});
+
   const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('isAuthenticated');
@@ -117,8 +133,3 @@ $('#add-device').on('click', () => {
  
   }
 
-   $('#send-command').on('click', function() {
-    const command = $('#command').val();
-    console.log(`command is: ${command}`);
-   });
-   
