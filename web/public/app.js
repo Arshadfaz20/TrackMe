@@ -112,7 +112,6 @@ $('#add-device').on('click', () => {
 });
 
 $('#send-command').on('click', function () {
-  console.log("clcied");
   const command = $('#command').val();
   const id = $('#id').val();
   console.log(`id is: ${id}  command is: ${command}`);
